@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>접근 권한 없음</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+    <script>
+    // 페이지 로딩 시 alert 띄우고 로그인 페이지로 이동
+    window.onload = function () {
+      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      window.location.href = "/login";
+    };
+  </script>
+
+<body>
+  {% include 'layout/header.html' %}
+  <div class="container">
+    <h1>로그인이 필요합니다</h1>
+    <h2 style="text-align: center;">리포트 작성을 위해서는 로그인이 필요합니다.</h2>
+  </div>
+</body>
+</html>

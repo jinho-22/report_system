@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>일지 등록</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  {% include 'layout/header.html' %}
+  <div class="container">
+    <h1>일지 등록</h1>
+    <form method="post" action="/log/submit" onsubmit="return validateForm()">
+      <div class="section">
+        <h2>기본 정보</h2>
+        <div class="form-row">
+          <label>담당자*</label>
+          <input type="text" value="{{ current_user_name }}" readonly disabled>
+          <input type="hidden" name="manager" value="{{ current_user_name }}">
+
+          <label>상태</label>
+          <select name="status">
+            <option value="">--선택--</option>
+            <option value="대기">대기</option>
+            <option value="진행 중">진행 중</option>
+            <option value="완료">완료</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>작성일자*</label><input type="date" name="log_date" required>
+          <label>작성시간*</label><input type="time" name="log_time" required>
+        </div>
+        <div class="form-row">
+          <label>완료일자</label><input type="date" name="completed_date">
+          <label>완료시간</label><input type="time" name="completed_time">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>고객 및 시스템 정보</h2>
+        <div class="form-row">
+          <label>고객사</label>
+          <select name="client_name" id="client_name" onchange="fetchClientOptions()">
+            <option value="">--선택--</option>
+            {% for name in client_names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+
+          <label>시스템명</label>
+          <select name="system_name" id="system_name">
+            <option value="">--선택--</option>
+          </select>
+
+
+          <label>대상 시스템/환경</label>
+          <select name="target_env" id="target_env" onchange="toggleCloudTypeBox()">
+            <option value="">--선택--</option>
+          </select>
+        </div>
+
+        <div class="form-row" id="cloud_type_box" style="display: none;">
+          <label for="cloud_type">클라우드 종류*</label>
+          <select name="cloud_type" id="cloud_type">
+            <option value="">--선택--</option>
+            <option value="NCP">NCP</option>
+            <option value="KTC">KTC</option>
+            <option value="NHN">NHN</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <h2>상세 정보</h2>
+        <div class="form-row">
+          <label>작업내용*</label><textarea name="content" required></textarea> <!-- placeholder="예) 당직 업무간 특이사항 X" -->
+        </div>
+        <div class="form-row">
+          <label>조치내용</label><textarea name="action"></textarea>
+        </div>
+        <div class="form-row">
+          <label>요약</label><textarea name="summary"></textarea>
+        </div>
+        <div class="form-row">
+          <label>특이사항</label><textarea name="etc"></textarea>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit">완료</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function validateForm() {
+      const logDate = document.querySelector('input[name="log_date"]').value;
+      const logTime = document.querySelector('input[name="log_time"]').value;
+      const compDate = document.querySelector('input[name="completed_date"]').value;
+      const compTime = document.querySelector('input[name="completed_time"]').value;
+
+      if (logDate && logTime && compDate && compTime) {
+        const log = new Date(`${logDate}T${logTime}`);
+        const comp = new Date(`${compDate}T${compTime}`);
+        if (comp < log) {
+          alert("완료일자는 작성일자보다 이후여야 합니다.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+  </script>
+
+  <script>
+    function fetchClientOptions() {
+      const clientName = document.getElementById("client_name").value;
+
+      fetch(`/client/options?client_name=${encodeURIComponent(clientName)}`)
+        .then(response => response.json())
+        .then(data => {
+          const systemSelect = document.getElementById("system_name");
+          const envSelect = document.getElementById("target_env");
+
+          systemSelect.innerHTML = `<option value="">--선택--</option>`;
+          envSelect.innerHTML = `<option value="">--선택--</option>`;
+
+          data.system_names.forEach(name => {
+            systemSelect.innerHTML += `<option value="${name}">${name}</option>`;
+          });
+
+          data.target_envs.forEach(env => {
+            envSelect.innerHTML += `<option value="${env}">${env}</option>`;
+          });
+        });
+    }
+
+    function toggleCloudTypeBox() {
+      const env = document.getElementById("target_env").value;
+      const box = document.getElementById("cloud_type_box");
+      if (env === "Cloud") {
+        box.style.display = "block";
+      } else {
+        box.style.display = "none";
+        document.getElementById("cloud_type").value = "";
+      }
+    }
+  </script>
+
+</body>
+
+</html>

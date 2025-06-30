@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>MSP 작업관리 시스템</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  <header>
+    <div class="top-bar">
+      <h1><a href="/">작업관리시스템</a></h1>
+      <div class="header">
+        {% if request.session.get('name') %}
+        <span>{{ request.session.get('name') }}</span>
+        <a href="/logout">로그아웃</a>
+        {% else %}
+        <a href="/login">로그인</a>
+        <a href="/register">회원가입</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <nav>
+      <div class="menu-item">
+        <a href="#">리포트 작성</a>
+        <div class="submenu">
+          <a href="/msp">MSP 작업 등록</a>
+          <a href="/error">장애 등록</a>
+          <a href="/log">일지 작성</a>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <a href="#">리포트 목록</a>
+        <div class="submenu">
+          <a href="/reports">MSP 작업 목록</a>
+          <a href="/error_reports">장애 목록</a>
+          <a href="/log_reports">일지 목록</a>
+        </div>
+      </div>
+
+      {% if request.session.get('username') == 'admin' %}
+      <div class="menu-item">
+        <a href="#">관리자 페이지</a>
+        <div class="submenu">
+          <a href="/admin/users">사용자 관리</a>
+          <a href="/admin/stats">통계</a>
+          <a href="/admin/stats/client">기업별 통계(미정)</a>
+          <a href="/client">고객사 관리</a>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="menu-item">
+        <a href="#">마이페이지</a>
+
+        {% if request.session.get('name') %}
+        <div class="submenu">
+          <a href="/profile">내 정보</a>
+          <a href="/change_password">비밀번호 변경</a>
+        </div>
+        {% else %}
+        <div class="submenu">
+          <a href="/login">로그인</a>
+          <a href="/register">회원가입</a>
+        </div>
+        {% endif %}
+        
+
+      </div>
+    </nav>
+  </header>
+</body>
+
+</html>

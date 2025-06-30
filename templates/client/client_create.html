@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>고객사 등록</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script>
+    function toggleCloudType() {
+      const env = document.getElementById("target_env").value;
+      const cloudTypeDiv = document.getElementById("cloud_type_wrapper");
+      if (env === "Cloud") {
+        cloudTypeDiv.style.display = "block";
+      } else {
+        cloudTypeDiv.style.display = "none";
+        document.getElementById("cloud_type").value = "";
+      }
+    }
+  </script>
+</head>
+
+<body>
+  {% include 'layout/header.html' %}
+
+  <div class="container">
+    <h2>고객사 등록</h2>
+    <form method="post" action="/client/create">
+      <div class="section">
+        <div class="form-row">
+          <label>고객사명:</label>
+          <input type="text" name="client_name" required>
+
+          <label>시스템명:</label>
+          <input type="text" name="system_name" required>
+        </div>
+
+        <div class="form-row">
+          <label>대상 환경:</label>
+          <select name="target_env" id="target_env" onchange="toggleCloudType()" required>
+            <option value="">-- 선택 --</option>
+            <option value="Cloud">Cloud</option>
+            <option value="On-Premise">On-Premise</option>
+          </select>
+
+
+          <div id="cloud_type_wrapper" style="display:none;">
+            <label>클라우드 종류:</label>
+            <select name="cloud_type" id="cloud_type">
+              <option value="">-- 선택 --</option>
+              <option value="NCP">NCP</option>
+              <option value="KTC">KTC</option>
+              <option value="NHN">NHN</option>
+            </select>
+          </div>
+
+          <label>구성:</label>
+          <input type="text" name="target_component">
+        </div>
+        <div class="button-group">
+          <button type="submit">등록</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>

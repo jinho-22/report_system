@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>장애 리포트 등록</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  {% include 'layout/header.html' %}
+  <div class="container">
+    <h1>장애 리포트 등록</h1>
+    <form method="post" action="/error/submit" onsubmit="return validateForm()">
+      <div class="section">
+        <h2>기본 정보</h2>
+        <div class="form-row">
+          <label>담당자*</label>
+          <input type="text" value="{{ current_user_name }}" readonly disabled>
+          <input type="hidden" name="manager" value="{{ current_user_name }}">
+
+          <label>상태*</label>
+          <select name="status" required>
+            <option value="">--선택--</option>
+            <option value="대기">대기</option>
+            <option value="진행 중">진행 중</option>
+            <option value="완료">완료</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>장애일자*</label><input type="date" name="error_start_date" required>
+          <label>장애시간*</label><input type="time" name="start_time" required>
+        </div>
+        <div class="form-row">
+          <label>복구일자</label><input type="date" name="error_end_date">
+          <label>복구시간</label><input type="time" name="end_time">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>고객 및 시스템 정보</h2>
+        <div class="form-row">
+          <!-- 고객사 -->
+          <label>고객사*</label>
+          <select name="client_name" id="client_name" required onchange="fetchClientOptions()">
+            <option value="">--선택--</option>
+            {% for name in client_names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+
+          <!-- 시스템명 -->
+          <label>시스템명*</label>
+          <select name="system_name" id="system_name" required>
+            <option value="">--선택--</option>
+          </select>
+
+          <!-- 대상 시스템/환경 -->
+          <label>대상 시스템/환경*</label>
+          <select name="target_env" id="target_env" required onchange="toggleCloudTypeBox()">
+            <option value="">--선택--</option>
+          </select>
+
+          <!-- 클라우드 종류 (Cloud일 경우만 표시) -->
+          <div id="cloud_type_box" style="display: none;">
+            <label for="cloud_type">클라우드 종류*</label>
+            <select name="cloud_type" id="cloud_type">
+              <option value="">--선택--</option>
+              <option value="NCP">NCP</option>
+              <option value="KTC">KTC</option>
+              <option value="NHN">NHN</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>장애 상세 정보</h2>
+          <div class="form-row">
+            <label>고객 영향</label><textarea name="customer_impact"></textarea>
+          </div>
+          <div class="form-row">
+            <label>장애 내용*</label><textarea name="error_info" required></textarea>
+          </div>
+          <div class="form-row">
+            <label>장애 원인</label><textarea name="error_reason"></textarea>
+          </div>
+          <div class="form-row">
+            <label>조치 내용</label><textarea name="action_taken"></textarea>
+          </div>
+          <div class="form-row">
+            <label>기타사항</label><textarea name="etc"></textarea>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="submit">완료</button>
+        </div>
+    </form>
+  </div>
+
+  <script>
+    function validateForm() {
+      const startDate = document.querySelector('input[name="error_start_date"]').value;
+      const startTime = document.querySelector('input[name="start_time"]').value;
+      const endDate = document.querySelector('input[name="error_end_date"]').value;
+      const endTime = document.querySelector('input[name="end_time"]').value;
+
+      if (startDate && startTime && endDate && endTime) {
+        const start = new Date(`${startDate}T${startTime}`);
+        const end = new Date(`${endDate}T${endTime}`);
+        if (end < start) {
+          alert("복구일자는 장애일자보다 이후여야 합니다.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+  </script>
+
+  <script>
+    function fetchClientOptions() {
+      const clientName = document.getElementById("client_name").value;
+
+      fetch(`/client/options?client_name=${encodeURIComponent(clientName)}`)
+        .then(response => response.json())
+        .then(data => {
+          // 시스템명 채우기
+          const systemSelect = document.getElementById("system_name");
+          systemSelect.innerHTML = `<option value="">--선택--</option>`;
+          data.system_names.forEach(name => {
+            systemSelect.innerHTML += `<option value="${name}">${name}</option>`;
+          });
+
+          // 대상환경 채우기
+          const envSelect = document.getElementById("target_env");
+          envSelect.innerHTML = `<option value="">--선택--</option>`;
+          data.target_envs.forEach(env => {
+            envSelect.innerHTML += `<option value="${env}">${env}</option>`;
+          });
+
+          toggleCloudTypeBox();
+        });
+    }
+
+    function toggleCloudTypeBox() {
+      const env = document.getElementById("target_env").value;
+      const box = document.getElementById("cloud_type_box");
+      if (env === "Cloud") {
+        box.style.display = "block";
+      } else {
+        box.style.display = "none";
+        document.getElementById("cloud_type").value = "";
+      }
+    }
+  </script>
+
+</body>
+
+</html>

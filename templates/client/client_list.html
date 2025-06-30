@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>고객사 목록</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  {% include 'layout/header.html' %}
+
+  <div class="container">
+    <h2>고객사 목록</h2>
+    <a href="/client/create" class="btn">고객사 등록</a>
+    <table>
+      <thead>
+        <tr>
+          <th>고객사명</th>
+          <th>시스템명</th>
+          <th>대상 환경</th>
+          <th>클라우드 종류</th>
+          <th>구성</th>
+          <th>관리</th> <!-- 삭제 버튼 위치 -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td>{{ client.client_name }}</td>
+          <td>{{ client.system_name }}</td>
+          <td>{{ client.target_env }}</td>
+          <td>{{ client.cloud_type or '' }}</td>
+          <td>{{ client.target_component }}</td>
+          <td>
+            <form method="post" action="/client/delete" onsubmit="return confirm('정말 삭제하시겠습니까?')">
+              <!-- 👇 화면에는 안 보이지만 서버로 값 전달됨 -->
+              <input type="hidden" name="client_id" value="{{ client.client_id }}">
+              <button type="submit" class="btn btn-danger">삭제</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+</body>
+
+</html>
