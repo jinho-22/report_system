@@ -470,147 +470,81 @@ body>div>div>div.download-link>a {
   margin: 0;
 }
 
-/* =========================
-   📱 모바일 전용 스타일
-   ========================= */
-@media (max-width: 768px) {
+/* ---------------------------------------------------------
+   데스크탑 덮어쓰기 (>= 768px)
+   --------------------------------------------------------- */
+@media (min-width: 768px) {
+  body { background: var(--bg); }
 
-  /* 레이아웃 */
   .container {
-    max-width: 100%;
-    margin: 0;
-    padding: 16px 4px; /* 좌우 폭 최소화 */
-    border-radius: 0;
-    box-shadow: none;
-    font-size: 15px; /* 글씨 살짝 키움 */
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0,0,0,.1);
   }
 
-  /* 상단바 */
-  .top-bar { height: 56px; }
-  .top-bar h1 { font-size: 18px; line-height: 56px; }
+  .top-bar { height: 60px; }
+  .top-bar h1 { font-size: 24px; line-height: 60px; }
 
-  /* 헤더/메뉴 */
-  .header { right: 12px; gap: 6px; }
-  .hamburger {
-    display: inline-block;
-    font-size: 24px;
-    cursor: pointer;
-  }
+  /* 메뉴: 가로 배치, 햄버거 숨김 */
+  .hamburger { display: none; }
   nav {
-    display: none;
-  }
-  nav.open {
-    display: block;
-    position: absolute;
-    left: 0; right: 0; top: 56px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 10px 0;
     background: #fff;
-    border-bottom: 1px solid #eee;
-    padding: 8px 12px;
+    border-top: 1px solid #eee; border-bottom: 1px solid #eee;
+    position: relative; z-index: 10;
   }
-  nav .menu-item { display: block; }
+  nav .menu-item { position: relative; }
   nav > .menu-item > a {
-    display: block;
-    padding: 10px 8px;
-    border-radius: 6px;
+    color: var(--primary); font-weight: 700; padding: 8px 14px; border-radius: 6px; display: inline-block;
   }
+  nav > .menu-item > a:hover { background: #f0f8ff; }
   .submenu {
-    position: static;
-    display: none !important;
-    border: none;
-    box-shadow: none;
-    min-width: auto;
+    display: none; position: absolute; top: 100%; left: 0;
+    background: #fff; border: 1px solid #ccc; border-radius: 6px; min-width: 160px;
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
   }
+  .menu-item:hover > .submenu { display: block; }
+  .submenu a {
+    display: block; padding: 10px 16px; color: #333; text-decoration: none; font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .submenu a:last-child { border-bottom: 0; }
+  .submenu a:hover { background: #f9f9f9; }
 
-  /* 제목, 섹션 타이포 */
-  .container > h1 {
-    font-size: 20px;
-    margin: 16px 0;
-  }
-  .section h2 {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-
-  /* 폼 레이아웃 */
+  /* 폼: 데스크탑 2열 그리드 자주 사용 */
   .form-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin: 8px 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
   }
-  .form-row label {
-    min-width: 0;
-    font-size: 14px;
-  }
-  .form-row input,
-  .form-row select,
-  .form-row textarea {
-    min-width: 0;
-    width: 100%;
-    font-size: 15px;
-    padding: 12px 14px;
+  #filter-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
   }
 
-  /* 버튼 */
-  .button-group {
-    gap: 8px;
-  }
+  /* 버튼 그룹 가로 배치 */
+  .button-group { flex-direction: row; justify-content: center; }
   .button-group button,
   .filter-bar button,
-  .csv-download-btn {
-    font-size: 15px;
-    padding: 12px 16px;
-    width: 100%; /* 폭 100% */
-  }
+  .csv-download-btn { width: auto; }
 
-  /* 필터 섹션 */
-  #filter-section {
-    grid-template-columns: 1fr; /* 1열 */
-    gap: 10px;
+  /* 필터바 가로 배치 */
+  .filter-bar {
+    flex-direction: row; align-items: center; justify-content: space-between;
   }
-  #filter-section input,
-  #filter-section select {
-    font-size: 15px;
-    padding: 10px 12px;
-  }
-  #filter-section .button-group {
-    flex-direction: column;
-    justify-content: stretch;
-  }
-  #filter-section .button-group button {
-    width: 100%;
-  }
+  .filter-bar input[type="text"] { width: 220px; }
 
-  /* 테이블 */
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-  table th,
-  table td {
-    padding: 12px 14px;
-    font-size: 14px;
-  }
-
-  /* 페이지네이션 */
-  .pagination a,
-  .pagination .current {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-
-  /* 다운로드 영역 */
-  .download-link { margin-top: 16px; }
+  /* 테이블: 데스크탑은 일반 블록 */
+  table { display: table; white-space: normal; }
 }
 
-/* 초소형 화면 보완 */
+/* 초소형 보완 (<= 400px) */
 @media (max-width: 400px) {
   .top-bar h1 { font-size: 16px; }
   .header a { font-size: 11px; padding: 5px 8px; }
-  .form-row input,
-  .form-row select,
-  .form-row textarea { font-size: 13px; }
+  .form-row input, .form-row select, .form-row textarea { font-size: 14px; }
 }
