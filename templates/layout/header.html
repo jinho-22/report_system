@@ -18,7 +18,7 @@
         <a href="/logout">로그아웃</a>
         {% else %}
         <a href="/login">로그인</a>
-        <a href="/register">회원가입</a>
+        <!-- <a href="/register">회원가입</a> -->
         {% endif %}
       </div>
     </div>
@@ -55,7 +55,7 @@
       {% endif %}
 
       <!-- <div class="menu-item">
-        <a href="#">마이페이지</a>
+        <a href="/change_password">비밀번호 변경</a>
 
         {% if request.session.get('name') %}
         <div class="submenu">
@@ -67,16 +67,16 @@
           <a href="/login">로그인</a>
           <a href="/register">회원가입</a>
         </div>
-        {% endif %} -->
+        {% endif %}
 
 
-      <!-- </div>
-      <div class="menu-item">
+      </div> -->
+      <!-- <div class="menu-item">
         <a href="#">솔리데오 리포트(기능 개발X)</a>
         <div class="submenu">
           <a href="/solideo/report">리포트 작성</a>
-        </div> -->
-
+        </div>
+      </div> -->
       <div class="menu-item">
         <a href="#">솔리데오 리포트</a>
         <div class="submenu">
@@ -85,12 +85,16 @@
         </div>
       </div>
 
-      <!-- </div>
       <div class="menu-item">
+        <a href="/change_password">비밀번호 변경</a>
+      </div>
+
+      <!-- <div class="menu-item">
         <a href="#">대체 휴가(기능 개발X)</a>
         <div class="submenu">
           <a href="/leave/comp/new">대체 휴가 신청</a>
-        </div> -->
+        </div>
+      </div> -->
     </nav>
   </header>
 </body>

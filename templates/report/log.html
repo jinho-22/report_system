@@ -30,7 +30,8 @@
         </div>
         <div class="form-row">
           <label>일자*</label><input type="date" name="log_date" required>
-          <label>시간*</label><input type="time" name="log_time" required>
+          <!-- <label>시간*</label><input type="time" name="log_time" required> -->
+           <input type="hidden" name="log_time" id="log_time" value="00:00">
         </div>
         <!-- <div class="form-row">
           <label>완료일자</label><input type="date" name="completed_date">
@@ -92,19 +93,19 @@
             <option value="OS">OS</option>
           </select>
         </div> -->
-        <div class="form-row">
+        <!-- <div class="form-row">
           <label for="log_type">작업 유형*</label>
           <input type="text" name="log_type" id="log_type">
-        </div>
+        </div> -->
         <div class="form-row">
           <label>작업내용*</label><textarea name="content" required></textarea> <!-- placeholder="예) 당직 업무간 특이사항 X" -->
         </div>
-        <div class="form-row">
+        <!-- <div class="form-row">
           <label>조치내용</label><textarea name="action"></textarea>
         </div>
         <div class="form-row">
           <label>요약</label><textarea name="summary"></textarea>
-        </div>
+        </div> -->
         <div class="form-row">
           <label>특이사항</label><textarea name="etc"></textarea>
         </div>
@@ -117,6 +118,8 @@
   </div>
 
   <script>
+    
+
     function validateForm() {
       const logDate = document.querySelector('input[name="log_date"]').value;
       const logTime = document.querySelector('input[name="log_time"]').value;
