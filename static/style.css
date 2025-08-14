@@ -470,32 +470,133 @@ body>div>div>div.download-link>a {
   margin: 0;
 }
 
-/* ---------------------------------------------------------
-   데스크탑 덮어쓰기 (>= 768px)
-   --------------------------------------------------------- */
+/* =========================
+   📱 모바일 전용 (≤ 768px)
+   ========================= */
+@media (max-width: 768px) {
+  /* 컨테이너 좌우 여백 여유 있게 */
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 16px 12px; /* 좌우 12px */
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 15px;
+  }
+
+  /* 테이블 셀 줄바꿈 허용 */
+  table th,
+  table td {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* 폼 요소 폭·패딩 유지 */
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  /* 버튼·필터바는 세로 배치 */
+  .button-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .button-group button,
+  .filter-bar button,
+  .csv-download-btn {
+    width: 100%;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* =========================
+   📱 모바일 전용 (≤ 768px)
+   ========================= */
+@media (max-width: 768px) {
+  /* --- 헤더 겹침 방지 --- */
+  .top-bar { position: relative; height: 56px; }
+  .top-bar h1 {
+    margin: 0; line-height: 56px; font-size: 18px; text-align: center;
+    padding-left: 48px;   /* 좌측 햄버거 공간 예약 */
+    padding-right: 120px; /* 우측 .header 버튼 공간 예약 (필요시 조정) */
+  }
+  .hamburger {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    display: inline-block; font-size: 24px; cursor: pointer;
+  }
+  .header {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; gap: 6px;
+  }
+  nav { display: none; }
+  nav.open {
+    display: block;
+    position: absolute; left: 0; right: 0; top: 56px; /* .top-bar 높이와 동일 */
+    background: #fff; border-bottom: 1px solid #eee; padding: 8px 12px; z-index: 10;
+  }
+
+  /* --- 레이아웃/폼/테이블 --- */
+  .container {
+    max-width: 100%; margin: 0; padding: 16px 12px; /* 좌우 12px */
+    border-radius: 0; box-shadow: none; font-size: 15px;
+  }
+  .container > h1 { font-size: 20px; margin: 16px 0; }
+  .section h2 { font-size: 16px; margin-bottom: 12px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 8px 0; }
+  .form-row label { min-width: 0; font-size: 14px; }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%; font-size: 15px; padding: 12px 14px;
+  }
+
+  .button-group { flex-direction: column; gap: 8px; }
+  .button-group button, .filter-bar button, .csv-download-btn { width: 100%; }
+
+  .filter-bar { display: flex; flex-direction: column; gap: 8px; }
+
+  table {
+    display: block; width: 100%; overflow-x: auto; white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  table th, table td {
+    padding: 12px 14px; font-size: 14px;
+    white-space: normal; word-break: break-word; /* 긴 텍스트 줄바꿈 */
+  }
+
+  .pagination a, .pagination .current { padding: 10px 12px; font-size: 14px; }
+}
+
+/* =========================
+   💻 데스크탑 전용 (≥ 768px)
+   ========================= */
 @media (min-width: 768px) {
   body { background: var(--bg); }
 
-  .container {
-    max-width: 960px;
-    margin: 30px auto;
-    padding: 30px;
-    border-radius: var(--radius);
-    box-shadow: 0 2px 12px rgba(0,0,0,.1);
+  /* --- 헤더 겹침 방지(데스크탑) --- */
+  .top-bar { position: relative; height: 60px; }
+  .top-bar h1 {
+    margin: 0; line-height: 60px; font-size: 24px; text-align: center;
+    padding-left: 0;      /* 데스크탑은 햄버거 숨김 */
+    padding-right: 160px; /* 우측 .header 공간 (버튼 폭에 맞춰 조정) */
+  }
+  .hamburger { display: none; }
+  .header {
+    position: absolute; right: 30px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; gap: 10px;
   }
 
-  .top-bar { height: 60px; }
-  .top-bar h1 { font-size: 24px; line-height: 60px; }
-
-  /* 메뉴: 가로 배치, 햄버거 숨김 */
-  .hamburger { display: none; }
+  /* --- 내비게이션 --- */
   nav {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 10px 0;
-    background: #fff;
-    border-top: 1px solid #eee; border-bottom: 1px solid #eee;
+    display: flex; justify-content: center; gap: 40px; padding: 10px 0;
+    background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee;
     position: relative; z-index: 10;
   }
   nav .menu-item { position: relative; }
@@ -516,33 +617,26 @@ body>div>div>div.download-link>a {
   .submenu a:last-child { border-bottom: 0; }
   .submenu a:hover { background: #f9f9f9; }
 
-  /* 폼: 데스크탑 2열 그리드 자주 사용 */
-  .form-row {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px 24px;
+  /* --- 레이아웃/폼/테이블 --- */
+  .container {
+    max-width: 960px; margin: 30px auto; padding: 30px;
+    border-radius: var(--radius); box-shadow: 0 2px 12px rgba(0,0,0,.1);
   }
-  #filter-section {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px 24px;
-  }
+  .form-row { grid-template-columns: repeat(2, 1fr); gap: 12px 24px; }
+  #filter-section { grid-template-columns: repeat(2, 1fr); gap: 12px 24px; }
 
-  /* 버튼 그룹 가로 배치 */
   .button-group { flex-direction: row; justify-content: center; }
-  .button-group button,
-  .filter-bar button,
-  .csv-download-btn { width: auto; }
+  .button-group button, .filter-bar button, .csv-download-btn { width: auto; }
 
-  /* 필터바 가로 배치 */
-  .filter-bar {
-    flex-direction: row; align-items: center; justify-content: space-between;
-  }
+  .filter-bar { flex-direction: row; align-items: center; justify-content: space-between; }
   .filter-bar input[type="text"] { width: 220px; }
 
-  /* 테이블: 데스크탑은 일반 블록 */
   table { display: table; white-space: normal; }
 }
 
-/* 초소형 보완 (<= 400px) */
+/* =========================
+   📏 초소형 화면 (≤ 400px)
+   ========================= */
 @media (max-width: 400px) {
   .top-bar h1 { font-size: 16px; }
   .header a { font-size: 11px; padding: 5px 8px; }
