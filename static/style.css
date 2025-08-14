@@ -1,4 +1,8 @@
-a {list-style: none; text-decoration: none; color: blue;}
+a {
+  list-style: none;
+  text-decoration: none;
+  color: blue;
+}
 
 body {
   font-family: Arial, sans-serif;
@@ -9,36 +13,6 @@ body {
   padding: 0;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  /* 테이블 가로 스크롤 */
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  /* 버튼 크기 조정 */
-  button, input[type="submit"] {
-    font-size: 14px;
-    padding: 8px 12px;
-  }
-
-  /* 헤더를 햄버거 메뉴로 */
-  .header nav {
-    display: none;
-  }
-  .hamburger {
-    display: block;
-    font-size: 24px;
-    cursor: pointer;
-  }
-}
 
 .container {
   max-width: 960px;
@@ -127,7 +101,7 @@ nav .menu-item {
   position: relative;
 }
 
-nav > .menu-item > a {
+nav>.menu-item>a {
   color: #007bff;
   text-decoration: none;
   font-weight: bold;
@@ -137,7 +111,7 @@ nav > .menu-item > a {
   display: inline-block;
 }
 
-nav > .menu-item > a:hover {
+nav>.menu-item>a:hover {
   background-color: #f0f8ff;
 }
 
@@ -154,7 +128,7 @@ nav > .menu-item > a:hover {
   z-index: 100;
 }
 
-.menu-item:hover > .submenu,
+.menu-item:hover>.submenu,
 .menu-item:has(.submenu:hover) .submenu {
   display: block;
 }
@@ -185,7 +159,7 @@ header h1 a {
   font-weight: bold;
 }
 
-.container > h1 {
+.container>h1 {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
@@ -322,7 +296,8 @@ table {
   margin-top: 10px;
 }
 
-table th, table td {
+table th,
+table td {
   border: 1px solid #ccc;
   padding: 8px 10px;
   text-align: center;
@@ -349,13 +324,16 @@ table th {
 
 .pagination {
   text-align: center;
-  margin-top: 30px; /* 기존보다 아래로 */
+  margin-top: 30px;
+  /* 기존보다 아래로 */
 }
 
 .pagination a {
   margin: 0 4px;
-  padding: 4px 10px; /* 크기 살짝 줄임 */
-  font-size: 12px;   /* 글씨도 살짝 작게 */
+  padding: 4px 10px;
+  /* 크기 살짝 줄임 */
+  font-size: 12px;
+  /* 글씨도 살짝 작게 */
   color: #007bff;
   text-decoration: none;
   border: 1px solid #ccc;
@@ -417,7 +395,8 @@ table th {
   background-color: #fafafa;
   margin-top: 10px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2열 고정 */
+  grid-template-columns: repeat(2, 1fr);
+  /* 2열 고정 */
   gap: 12px 24px;
   align-items: center;
 }
@@ -441,7 +420,8 @@ table th {
 }
 
 #filter-section .button-group {
-  grid-column: span 2; /* 버튼은 전체 너비 */
+  grid-column: span 2;
+  /* 버튼은 전체 너비 */
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -462,26 +442,31 @@ table th {
   background-color: #f0f0f0;
 }
 
-body > div > div > div.download-link > a{
+body>div>div>div.download-link>a {
   text-decoration: none;
   list-style: none;
   color: #fff;
 }
 
 .form-row input[type="checkbox"] {
-  min-width: auto;   /* 160px 상속 제거 */
+  min-width: auto;
+  /* 160px 상속 제거 */
   width: auto;
-  margin-left: 0;    /* 4px 제거 */
-  padding: 0;        /* 불필요 여백 제거 */
+  margin-left: 0;
+  /* 4px 제거 */
+  padding: 0;
+  /* 불필요 여백 제거 */
 }
 
 /* 체크박스 라벨 보정 */
 .form-row label.cb {
-  min-width: auto;          /* 90px 제거 */
+  min-width: auto;
+  /* 90px 제거 */
   font-weight: 500;
   display: inline-flex;
   align-items: center;
-  gap: 6px;                 /* □와 글자 간격만 */
+  gap: 6px;
+  /* □와 글자 간격만 */
   margin: 0;
 }
 
@@ -490,7 +475,11 @@ body > div > div > div.download-link > a{
    ========================= */
 
 /* 공통 터치 영역 확대 */
-button, input, select, textarea, a {
+button,
+input,
+select,
+textarea,
+a {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -501,42 +490,77 @@ button, input, select, textarea, a {
   .container {
     max-width: 100%;
     margin: 0;
-    padding: 16px;
+    padding: 12px 8px;
+    /* 위아래 12px, 좌우 8px */
     border-radius: 0;
     box-shadow: none;
   }
 
   /* 상단바 타이포 & 높이 */
-  .top-bar { height: 56px; }
-  .top-bar h1 { font-size: 18px; line-height: 56px; }
+  .top-bar {
+    height: 56px;
+  }
+
+  .top-bar h1 {
+    font-size: 18px;
+    line-height: 56px;
+  }
 
   /* 헤더: 햄버거 우선, 메뉴는 기본 숨김 */
-  .header { right: 12px; gap: 6px; }
-  .hamburger { display: inline-block; font-size: 24px; cursor: pointer; }
-  nav { display: none; }
-  nav.open { 
+  .header {
+    right: 12px;
+    gap: 6px;
+  }
+
+  .hamburger {
+    display: inline-block;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  nav {
+    display: none;
+  }
+
+  nav.open {
     display: block;
     position: absolute;
-    left: 0; right: 0; top: 56px;
+    left: 0;
+    right: 0;
+    top: 56px;
     background: #fff;
     border-bottom: 1px solid #eee;
     padding: 8px 12px;
   }
-  nav .menu-item { display: block; }
-  nav > .menu-item > a {
+
+  nav .menu-item {
+    display: block;
+  }
+
+  nav>.menu-item>a {
     display: block;
     padding: 10px 8px;
     border-radius: 6px;
   }
+
   .submenu {
     position: static;
     display: none !important;
-    border: none; box-shadow: none; min-width: auto;
+    border: none;
+    box-shadow: none;
+    min-width: auto;
   }
 
   /* 섹션 타이포 */
-  .container > h1 { font-size: 18px; margin: 12px 0; }
-  .section h2 { font-size: 14px; margin-bottom: 12px; }
+  .container>h1 {
+    font-size: 18px;
+    margin: 12px 0;
+  }
+
+  .section h2 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
 
   /* 폼: 그리드로 1열 정렬, 라벨 위/인풋 아래 */
   .form-row {
@@ -545,10 +569,12 @@ button, input, select, textarea, a {
     gap: 10px;
     margin: 8px 0;
   }
+
   .form-row label {
     min-width: 0;
     font-size: 13px;
   }
+
   .form-row input,
   .form-row select,
   .form-row textarea {
@@ -562,6 +588,7 @@ button, input, select, textarea, a {
   .button-group {
     gap: 8px;
   }
+
   .button-group button,
   .filter-bar button,
   .csv-download-btn {
@@ -574,10 +601,12 @@ button, input, select, textarea, a {
     grid-template-columns: 1fr;
     gap: 10px;
   }
+
   #filter-section .button-group {
     grid-column: auto;
     justify-content: stretch;
   }
+
   #filter-section .button-group button {
     width: 100%;
   }
@@ -590,26 +619,40 @@ button, input, select, textarea, a {
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
   }
-  table th, table td {
+
+  table th,
+  table td {
     padding: 10px 12px;
     font-size: 12px;
   }
 
   /* 페이지네이션: 터치 친화 */
-  .pagination a, .pagination .current {
+  .pagination a,
+  .pagination .current {
     padding: 8px 10px;
     font-size: 12px;
   }
 
   /* 다운로드 영역 간격 */
-  .download-link { margin-top: 16px; }
+  .download-link {
+    margin-top: 16px;
+  }
 }
 
 /* 초소형(<= 400px) 보완 */
 @media (max-width: 400px) {
-  .top-bar h1 { font-size: 16px; }
-  .header a { font-size: 11px; padding: 5px 8px; }
+  .top-bar h1 {
+    font-size: 16px;
+  }
+
+  .header a {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
   .form-row input,
   .form-row select,
-  .form-row textarea { font-size: 13px; }
+  .form-row textarea {
+    font-size: 13px;
+  }
 }
