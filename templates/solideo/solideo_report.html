@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>솔리데오 전용 업무 보고</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script>
+  async function loadClients() {
+    const res = await fetch('/solideo/options');
+    const data = await res.json();
+    const sel = document.getElementById('client_name');
+    sel.innerHTML = '<option value="">-선택-</option>';
+    (data.clients || []).forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+  }
+
+  async function onClientChange() {
+    const client = document.getElementById('client_name').value;
+    const sysSel = document.getElementById('system_name');
+    const envSel = document.getElementById('target_env');
+    sysSel.innerHTML = '<option value="">-선택-</option>';
+    envSel.innerHTML = '<option value="">-선택-</option>';
+    if (!client) return;
+
+    const res = await fetch('/solideo/options?client=' + encodeURIComponent(client));
+    const data = await res.json();
+
+    (data.systems || []).forEach(s => {
+      const o = document.createElement('option'); o.value = s; o.textContent = s; sysSel.appendChild(o);
+    });
+    (data.envs || []).forEach(e => {
+      const o = document.createElement('option'); o.value = e; o.textContent = e; envSel.appendChild(o);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', loadClients);
+</script>
+
+
+</head>
+
+<body>
+  {% include 'layout/header.html' %}
+  <div class="container">
+    <h1 class="page-title">솔리데오 전용 업무 보고</h1>
+
+    <form method="post" action="/solideo/report/submit" onsubmit="return validateForm()">
+      <div class="section">
+        <h2 class="section-title">기본 정보</h2>
+        <div class="form-row">
+          <label for="manager">담당자<span class="req">*</span></label>
+          <input type="text" id="manager" name="manager" placeholder="담당자 입력" />
+        </div>
+        <div class="form-row date-row">
+          <label for="date">일자<span class="req">*</span></label>
+          <input type="date" id="date" name="date" />
+          <label class="cb"><input type="checkbox" name="time_slot" value="오전"> 오전</label>
+          <label class="cb"><input type="checkbox" name="time_slot" value="오후"> 오후</label>
+          <label class="cb"><input type="checkbox" name="time_slot" value="야간"> 야간</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">시스템 정보</h2>
+        <div class="grid-3">
+          <div class="form-row">
+            <label for="client_name">고객사</label>
+            <select id="client_name" name="client_name" onchange="onClientChange()">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="system_name">시스템명</label>
+            <select id="system_name" name="system_name">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="target_env">대상시스템/환경</label>
+            <select id="target_env" name="target_env">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">업무 보고</h2>
+
+        <div class="form-row">
+          <label for="content">업무 내용<span class="req">*</span></label>
+          <textarea id="content" name="content" rows="6" placeholder="업무 내용을 상세히 작성하여주세요."></textarea>
+        </div>
+
+        <div class="form-row">
+          <label for="summary">참고사항<span class="req">*</span></label>
+          <textarea id="summary" name="summary" rows="5" placeholder="참고해야 할 사항 등을 작성해주세요."></textarea>
+        </div>
+
+        <div class="form-row">
+          <label for="special_note">특이사항</label>
+          <textarea id="special_note" name="special_note" rows="4" placeholder=""></textarea>
+        </div>
+
+
+
+      </div>
+      <div class="button-group">
+        <button type="submit">완료</button>
+      </div>
+
+    </form>
+  </div>
+</body>
+
+</html>

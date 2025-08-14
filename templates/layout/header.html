@@ -23,7 +23,7 @@
     </div>
 
     <nav>
-      <div class="menu-item">
+      <!-- <div class="menu-item">
         <a href="#">리포트 작성</a>
         <div class="submenu">
           <a href="/msp">MSP 작업 등록</a>
@@ -39,7 +39,7 @@
           <a href="/error_reports">장애 목록</a>
           <a href="/log_reports">일지 목록</a>
         </div>
-      </div>
+      </div> -->
 
       {% if request.session.get('username') == 'admin' %}
       <div class="menu-item">
@@ -53,7 +53,7 @@
       </div>
       {% endif %}
 
-      <div class="menu-item">
+      <!-- <div class="menu-item">
         <a href="#">마이페이지</a>
 
         {% if request.session.get('name') %}
@@ -66,10 +66,30 @@
           <a href="/login">로그인</a>
           <a href="/register">회원가입</a>
         </div>
-        {% endif %}
-        
+        {% endif %} -->
 
+
+      <!-- </div>
+      <div class="menu-item">
+        <a href="#">솔리데오 리포트(기능 개발X)</a>
+        <div class="submenu">
+          <a href="/solideo/report">리포트 작성</a>
+        </div> -->
+
+      <div class="menu-item">
+        <a href="#">솔리데오 리포트</a>
+        <div class="submenu">
+          <a href="/log">리포트 작성</a>
+          <a href="/log_reports">리포트 목록</a>
+        </div>
       </div>
+
+      <!-- </div>
+      <div class="menu-item">
+        <a href="#">대체 휴가(기능 개발X)</a>
+        <div class="submenu">
+          <a href="/leave/comp/new">대체 휴가 신청</a>
+        </div> -->
     </nav>
   </header>
 </body>

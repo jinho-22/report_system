@@ -60,6 +60,13 @@
           <select name="target_env" id="target_env" required onchange="toggleCloudTypeBox()">
             <option value="">--선택--</option>
           </select>
+        </div>
+        <div class="form-row">
+          <label for="target_component">구성*</label>
+          <select name="target_component" id="target_component" required>
+            <option value="">--선택--</option>
+          </select>
+
 
           <!-- 클라우드 종류 (Cloud일 경우만 표시) -->
           <div id="cloud_type_box" style="display: none;">
@@ -70,8 +77,12 @@
               <option value="KTC">KTC</option>
               <option value="NHN">NHN</option>
             </select>
+
           </div>
         </div>
+
+
+
 
         <div class="section">
           <h2>장애 상세 정보</h2>
@@ -139,8 +150,18 @@
             envSelect.innerHTML += `<option value="${env}">${env}</option>`;
           });
 
-          toggleCloudTypeBox();
+          // 🔥 장애 대상 채우기
+          const compSelect = document.getElementById("target_component");
+          compSelect.innerHTML = `<option value="">--선택--</option>`;
+          if (data.target_components) {
+            data.target_components.forEach(comp => {
+              compSelect.innerHTML += `<option value="${comp}">${comp}</option>`;
+            });
+          }
+
+          toggleCloudTypeBox(); // cloud_type 노출여부
         });
+
     }
 
     function toggleCloudTypeBox() {

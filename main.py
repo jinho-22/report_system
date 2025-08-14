@@ -34,6 +34,9 @@ import tempfile
 from utils.auth import create_access_token, verify_password, get_current_user, get_password_hash
 from starlette.status import HTTP_401_UNAUTHORIZED
 from fastapi.exception_handlers import http_exception_handler
+from typing import List
+from datetime import datetime, time as dt_time
+
 
 # 외부 라이브러리
 from natsort import natsorted
@@ -89,9 +92,12 @@ def get_client_options(client_name: str, db: Session = Depends(get_db)):
     results = db.query(Client).filter(Client.client_name == client_name).all()
     system_names = sorted({row.system_name for row in results})
     target_envs = sorted({row.target_env for row in results})
+    target_components = sorted({row.target_component for row in results if row.target_component})
+
     return JSONResponse({
         "system_names": system_names,
-        "target_envs": target_envs
+        "target_envs": target_envs,
+        "target_components": target_components
     })
 
 @app.get("/client", response_class=HTMLResponse)
@@ -341,6 +347,7 @@ async def submit_msp(
     client_name: str = Form(...),
     system_name: str = Form(...),
     target_env: str = Form(None),
+    cloud_type: str = Form(None),
     requester: str = Form(...),
     request_type: str = Form(...),
     request_content: str = Form(None),
@@ -375,6 +382,7 @@ async def submit_msp(
         client_name=client_name,
         system_name=system_name,
         target_env=target_env,
+        cloud_type=cloud_type,
         requester=requester,
         request_type=request_type,
         request_content=request_content,
@@ -402,6 +410,7 @@ async def submit_error(
     client_name: str = Form(...),
     system_name: str = Form(...),
     target_env: str = Form(None),
+    cloud_type: str = Form(None),
     target_component: str = Form(None),
     customer_impact: str = Form(None),
     error_info: str = Form(...),
@@ -432,6 +441,7 @@ async def submit_error(
         client_name=client_name,
         system_name=system_name,
         target_env=target_env,
+        cloud_type=cloud_type,
         target_component=target_component,
         customer_impact=customer_impact,
         error_info=error_info,
@@ -444,6 +454,14 @@ async def submit_error(
 
     return RedirectResponse(url="/error_reports", status_code=303)
 
+@app.get("/error/components")
+def get_target_components(db: Session = Depends(get_db)):
+    # 중복 제거 + NULL 제외
+    results = db.query(ErrorReport.target_component).distinct().all()
+    components = [r[0] for r in results if r[0] is not None]
+    return JSONResponse(content={"components": components})
+
+
 
 @app.post("/log/submit")
 async def submit_log(
@@ -453,6 +471,7 @@ async def submit_log(
     client_name: str = Form(...),
     system_name: str = Form(...),
     target_env: str = Form(None),
+    cloud_type: str = Form(None),
     log_type: str = Form(...),
     content: str = Form(None),
     action: str = Form(None),
@@ -461,6 +480,7 @@ async def submit_log(
     completed_date: str = Form(None),
     completed_time: str = Form(None),
     summary: str = Form(None),
+    etc: str = Form(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -484,13 +504,15 @@ async def submit_log(
         client_name=client_name,
         system_name=system_name,
         target_env=target_env,
+        cloud_type=cloud_type,
         log_type=log_type,
         content=content,
         action=action,
         manager=manager,
         status=status,
         completed_date=completed_datetime,
-        summary=summary
+        summary=summary,
+        etc=etc
     )
     db.add(log_report)
     db.commit()
@@ -1669,3 +1691,201 @@ def client_stats_detail(client_name: str, request: Request, db: Session = Depend
 #         HTML(string=html_content, base_url="http://localhost:8000/static").write_pdf(tmp_file.name) # 운영시 변경 필요
 #         return FileResponse(tmp_file.name, filename=f"{client_name}_통계.pdf", media_type="application/pdf")
 # 
+
+
+# ------------------------------------------------------------------
+# 솔리데오 옵션: 고객사 / (고객사 선택 시) 시스템/환경 목록
+# ------------------------------------------------------------------
+@app.get("/solideo/options", response_class=JSONResponse)
+def solideo_options(client: str = "", db: Session = Depends(get_db)):
+    """
+    - client 미지정: 고객사 목록 반환
+    - client 지정: 해당 고객사의 시스템/환경 목록 반환
+    """
+    if not client:
+        clients = set()
+        for cls in (MspReport, ErrorReport, LogReport):
+            # .all() 결과는 튜플(값,) 이므로 c[0] 형태
+            for c in db.query(cls.client_name).distinct().all():
+                if c[0]:
+                    clients.add(c[0].strip())
+        # 자연 정렬
+        return JSONResponse({"clients": natsorted(clients), "systems": [], "envs": []})
+
+    # 특정 고객사일 때
+    systems, envs = set(), set()
+
+    for cls in (MspReport, ErrorReport, LogReport):
+        for s in (
+            db.query(cls.system_name)
+              .filter(cls.client_name == client)
+              .distinct()
+              .all()
+        ):
+            if s[0]:
+                systems.add(s[0].strip())
+        for e in (
+            db.query(cls.target_env)
+              .filter(cls.client_name == client)
+              .distinct()
+              .all()
+        ):
+            if e[0]:
+                envs.add(e[0].strip())
+
+    return JSONResponse({
+        "clients": [],
+        "systems": natsorted(systems),
+        "envs": natsorted(envs),
+    })
+
+
+# ------------------------------------------------------------------
+# 작성 폼
+# ------------------------------------------------------------------
+@app.get("/solideo/report", response_class=HTMLResponse)
+def solideo_new_form(request: Request):
+    return templates.TemplateResponse("solideo/solideo_report.html", {
+        "request": request
+    })
+
+
+# ------------------------------------------------------------------
+# 제출
+# ------------------------------------------------------------------
+@app.post("/solideo/report/submit")
+def solideo_submit(
+    request: Request,
+    manager: str = Form(...),
+    date: str = Form(...),                   # YYYY-MM-DD
+    time_slot: List[str] = Form(None),       # 체크박스 복수 선택(없을 수도 있음)
+    client_name: str = Form(""),
+    system_name: str = Form(""),
+    target_env: str = Form(""),
+    content: str = Form(...),
+    summary: str = Form(...),
+    special_note: str = Form(""),
+    db: Session = Depends(get_db)
+):
+    # --- 필수 검증 ---
+    if not manager.strip():
+        raise HTTPException(status_code=400, detail="담당자는 필수입니다.")
+    if not date.strip():
+        raise HTTPException(status_code=400, detail="일자는 필수입니다.")
+    if time_slot is None or len(time_slot) == 0:
+        raise HTTPException(status_code=400, detail="시간대는 최소 1개 이상 선택하세요.")
+    if not content.strip():
+        raise HTTPException(status_code=400, detail="업무 내용은 필수입니다.")
+    if not summary.strip():
+        raise HTTPException(status_code=400, detail="참고사항은 필수입니다.")
+
+    # --- 날짜 파싱(자정으로 고정) ---
+    try:
+        d = datetime.strptime(date.strip(), "%Y-%m-%d").date()
+        log_dt = datetime.combine(d, dt_time(0, 0, 0))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="일자 형식이 잘못되었습니다(YYYY-MM-DD).")
+
+    # --- 시간대 문자열로 합치기 (예: '오전,오후') ---
+    # 체크박스가 1개면 문자열로 들어올 가능성을 대비
+    if isinstance(time_slot, str):
+        time_slot_list = [time_slot]
+    else:
+        time_slot_list = [t for t in time_slot if t and t.strip()]
+    time_slot_str = ",".join(time_slot_list)
+
+    # --- 저장 ---
+    item = LogReport(
+        log_date=log_dt,
+        client_name=(client_name.strip() or None),
+        system_name=(system_name.strip() or None),
+        target_env=(target_env.strip() or None),
+        log_type="SOLIDEO",
+        content=content.strip(),
+        action=(special_note.strip() or None),   # 특이사항 -> action
+        manager=manager.strip(),
+        status="작성",
+        summary=summary.strip(),
+        etc=time_slot_str                          # 체크박스 선택값 보관
+    )
+    db.add(item)
+    db.commit()
+
+    return RedirectResponse(url="/", status_code=303)
+
+
+# 대체 휴가 신청
+# 고객사/시스템/환경 옵션 (기존 리포트에서 distinct 추출)
+@app.get("/leave/options", response_class=JSONResponse)
+def leave_options(client: str = "", db: Session = Depends(get_db)):
+    clients, systems, envs = set(), set(), set()
+    if not client:
+        for cls in (MspReport, ErrorReport, LogReport):
+            for c in db.query(cls.client_name).distinct():
+                if c[0]: clients.add(c[0])
+        return JSONResponse({"clients": sorted(clients), "systems": [], "envs": []})
+
+    for cls in (MspReport, ErrorReport, LogReport):
+        for s in db.query(cls.system_name).filter(cls.client_name == client).distinct():
+            if s[0]: systems.add(s[0])
+        for e in db.query(cls.target_env).filter(cls.client_name == client).distinct():
+            if e[0]: envs.add(e[0])
+    return JSONResponse({"clients": [], "systems": sorted(systems), "envs": sorted(envs)})
+
+# 폼 보기
+@app.get("/leave/comp/new", response_class=HTMLResponse)
+def leave_comp_form(request: Request):
+    return templates.TemplateResponse("leave/comp_form.html", {"request": request})
+
+# 제출
+@app.post("/leave/comp/submit")
+def leave_comp_submit(
+    request: Request,
+    manager: str = Form(...),
+    start_date: str = Form(...),   # YYYY-MM-DD
+    start_time: str = Form(...),   # HH:MM
+    end_date: str = Form(...),     # YYYY-MM-DD
+    end_time: str = Form(...),     # HH:MM
+    client_name: str = Form(""),
+    system_name: str = Form(""),
+    target_env: str = Form(""),
+    reason: str = Form(...),       # 신청 사유
+    memo: str = Form(""),          # 인수인계/메모 (옵션)
+    db: Session = Depends(get_db)
+):
+    # 유효성 검사
+    for fid, val in {
+        "담당자": manager, "시작일자": start_date, "시작시간": start_time,
+        "완료일자": end_date, "완료시간": end_time, "신청 사유": reason
+    }.items():
+        if not str(val).strip():
+            raise HTTPException(status_code=400, detail=f"{fid}은(는) 필수입니다.")
+
+    # 날짜시간 결합
+    try:
+        start_dt = datetime.strptime(start_date.strip()+" "+start_time.strip(), "%Y-%m-%d %H:%M")
+        end_dt   = datetime.strptime(end_date.strip()+" "+end_time.strip(), "%Y-%m-%d %H:%M")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="날짜/시간 형식이 올바르지 않습니다.")
+
+    if end_dt <= start_dt:
+        raise HTTPException(status_code=400, detail="완료일시가 시작일시 이후여야 합니다.")
+
+    # 저장 매핑 (새 컬럼 추가 없이 운영)
+    item = LogReport(
+        log_date=start_dt,            # 시작일시
+        completed_date=end_dt,        # 완료일시
+        client_name=client_name or None,
+        system_name=system_name or None,
+        target_env=target_env or None,
+        manager=manager.strip(),
+        log_type="LEAVE",             # 구분자
+        status="신청",
+        content=reason.strip(),       # 신청 사유
+        summary="대체휴가 신청",        # 간단 라벨
+        action=(memo.strip() or None),
+        etc=f"start_time={start_time.strip()},end_time={end_time.strip()}"
+    )
+    db.add(item)
+    db.commit()
+    return RedirectResponse(url="/", status_code=303)

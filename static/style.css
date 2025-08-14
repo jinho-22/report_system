@@ -9,6 +9,37 @@ body {
   padding: 0;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  /* 테이블 가로 스크롤 */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* 버튼 크기 조정 */
+  button, input[type="submit"] {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  /* 헤더를 햄버거 메뉴로 */
+  .header nav {
+    display: none;
+  }
+  .hamburger {
+    display: block;
+    font-size: 24px;
+    cursor: pointer;
+  }
+}
+
 .container {
   max-width: 960px;
   margin: 30px auto;
@@ -435,4 +466,21 @@ body > div > div > div.download-link > a{
   text-decoration: none;
   list-style: none;
   color: #fff;
+}
+
+.form-row input[type="checkbox"] {
+  min-width: auto;   /* 160px 상속 제거 */
+  width: auto;
+  margin-left: 0;    /* 4px 제거 */
+  padding: 0;        /* 불필요 여백 제거 */
+}
+
+/* 체크박스 라벨 보정 */
+.form-row label.cb {
+  min-width: auto;          /* 90px 제거 */
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;                 /* □와 글자 간격만 */
+  margin: 0;
 }

@@ -43,6 +43,7 @@ class MspReport(Base):
     status = Column(String(10))
     response = Column(Text)
     etc = Column(Text)
+    cloud_type = Column(String(50))
 
     report = relationship("Report")
 
@@ -64,6 +65,7 @@ class ErrorReport(Base):
     status = Column(String(10))
     error_end_date = Column(DateTime)
     etc = Column(Text)
+    cloud_type = Column(String(50))
 
     report = relationship("Report")
 
@@ -85,6 +87,7 @@ class LogReport(Base):
     completed_date = Column(DateTime)
     summary = Column(Text)
     etc = Column(Text)
+    cloud_type = Column(String(50))
 
     report = relationship("Report")
 

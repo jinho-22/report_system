@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>대체휴가 신청</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script>
+    async function loadClients() {
+      const res = await fetch('/leave/options');
+      const data = await res.json();
+      const sel = document.getElementById('client_name');
+      sel.innerHTML = '<option value="">-선택-</option>';
+      (data.clients || []).forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        sel.appendChild(o);
+      });
+    }
+    async function onClientChange() {
+      const client = document.getElementById('client_name').value;
+      const sysSel = document.getElementById('system_name');
+      const envSel = document.getElementById('target_env');
+      sysSel.innerHTML = '<option value="">-선택-</option>';
+      envSel.innerHTML = '<option value="">-선택-</option>';
+      if (!client) return;
+      const res = await fetch('/leave/options?client=' + encodeURIComponent(client));
+      const data = await res.json();
+      (data.systems || []).forEach(s => {
+        const o = document.createElement('option'); o.value = s; o.textContent = s; sysSel.appendChild(o);
+      });
+      (data.envs || []).forEach(e => {
+        const o = document.createElement('option'); o.value = e; o.textContent = e; envSel.appendChild(o);
+      });
+    }
+    function validateForm() {
+      const rq = ['manager','start_date','start_time','end_date','end_time','reason'];
+      for (const id of rq) {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) { alert('필수 항목을 입력하세요.'); el.focus(); return false; }
+      }
+      // 완료가 시작 이후인지 프런트에서도 1차 체크
+      const sd = document.getElementById('start_date').value + ' ' + document.getElementById('start_time').value + ':00';
+      const ed = document.getElementById('end_date').value + ' ' + document.getElementById('end_time').value + ':00';
+      if (new Date(ed) <= new Date(sd)) { alert('완료일시는 시작일시 이후여야 합니다.'); return false; }
+      return true;
+    }
+    document.addEventListener('DOMContentLoaded', loadClients);
+  </script>
+</head>
+<body>
+  {% include 'layout/header.html' %}
+  <div class="container form-container">
+    <h1 class="page-title">대체휴가 신청</h1>
+
+    <form method="post" action="/leave/comp/submit" onsubmit="return validateForm()">
+      <div class="section">
+        <h2 class="section-title">기본 정보</h2>
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="manager">신청자<span class="req">*</span></label>
+            <input type="text" id="manager" name="manager" placeholder="신청자 입력" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="start_date">시작일자<span class="req">*</span></label>
+            <input type="date" id="start_date" name="start_date" />
+            <label for="start_time">시작시간<span class="req">*</span></label>
+            <input type="time" id="start_time" name="start_time" />
+          </div>
+          
+        </div>
+
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="end_date">완료일자<span class="req">*</span></label>
+            <input type="date" id="end_date" name="end_date" />
+            <label for="end_time">완료시간<span class="req">*</span></label>
+            <input type="time" id="end_time" name="end_time" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">시스템 정보 (선택)</h2>
+        <div class="grid-3">
+          <div class="form-row">
+            <label for="client_name">고객사</label>
+            <select id="client_name" name="client_name" onchange="onClientChange()">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="system_name">시스템명</label>
+            <select id="system_name" name="system_name">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="target_env">대상시스템/환경</label>
+            <select id="target_env" name="target_env">
+              <option value="">-선택-</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">업무 보고</h2>
+        <div class="form-row">
+          <label for="reason">신청 사유<span class="req">*</span></label>
+          <textarea id="reason" name="reason" rows="6" placeholder="대체휴가 신청 사유(작업 내용)를 입력하세요."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="memo">인수인계/메모</label>
+          <textarea id="memo" name="memo" rows="4" placeholder="인수인계 사항 또는 메모"></textarea>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit">완료</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
