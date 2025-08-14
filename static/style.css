@@ -484,3 +484,132 @@ body > div > div > div.download-link > a{
   gap: 6px;                 /* □와 글자 간격만 */
   margin: 0;
 }
+
+/* =========================
+   ✅ 모바일 최적화 추가 스타일
+   ========================= */
+
+/* 공통 터치 영역 확대 */
+button, input, select, textarea, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 모바일: 폭 채우기, 여백 줄이기 */
+@media (max-width: 768px) {
+
+  /* 레이아웃 */
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* 상단바 타이포 & 높이 */
+  .top-bar { height: 56px; }
+  .top-bar h1 { font-size: 18px; line-height: 56px; }
+
+  /* 헤더: 햄버거 우선, 메뉴는 기본 숨김 */
+  .header { right: 12px; gap: 6px; }
+  .hamburger { display: inline-block; font-size: 24px; cursor: pointer; }
+  nav { display: none; }
+  nav.open { 
+    display: block;
+    position: absolute;
+    left: 0; right: 0; top: 56px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 8px 12px;
+  }
+  nav .menu-item { display: block; }
+  nav > .menu-item > a {
+    display: block;
+    padding: 10px 8px;
+    border-radius: 6px;
+  }
+  .submenu {
+    position: static;
+    display: none !important;
+    border: none; box-shadow: none; min-width: auto;
+  }
+
+  /* 섹션 타이포 */
+  .container > h1 { font-size: 18px; margin: 12px 0; }
+  .section h2 { font-size: 14px; margin-bottom: 12px; }
+
+  /* 폼: 그리드로 1열 정렬, 라벨 위/인풋 아래 */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 8px 0;
+  }
+  .form-row label {
+    min-width: 0;
+    font-size: 13px;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    min-width: 0;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  /* 버튼 터치 크기 */
+  .button-group {
+    gap: 8px;
+  }
+  .button-group button,
+  .filter-bar button,
+  .csv-download-btn {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  /* 필터 영역: 1열로 전환 */
+  #filter-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  #filter-section .button-group {
+    grid-column: auto;
+    justify-content: stretch;
+  }
+  #filter-section .button-group button {
+    width: 100%;
+  }
+
+  /* 테이블: 가로 스크롤 + 최소 터치 영역 */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  table th, table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  /* 페이지네이션: 터치 친화 */
+  .pagination a, .pagination .current {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* 다운로드 영역 간격 */
+  .download-link { margin-top: 16px; }
+}
+
+/* 초소형(<= 400px) 보완 */
+@media (max-width: 400px) {
+  .top-bar h1 { font-size: 16px; }
+  .header a { font-size: 11px; padding: 5px 8px; }
+  .form-row input,
+  .form-row select,
+  .form-row textarea { font-size: 13px; }
+}
