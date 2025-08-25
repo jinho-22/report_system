@@ -575,13 +575,8 @@ body>div>div>div.download-link>a {
 
   .pagination a, .pagination .current { padding: 10px 12px; font-size: 14px; }
 
-    .form-row input[name="log_date"],
-.form-row input[name="log_time"],
-.form-row input[name="completed_date"],
-.form-row input[name="username"],
-.form-row input[name="password"],
-.form-row input[name="completed_time"] {
-  width: 92%
+    .form-row input {
+  width: 90%
 }
 
 .form-row input[readonly][disabled] {
