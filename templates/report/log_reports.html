@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>일지 리포트 목록</title>
   <link rel="stylesheet" href="/static/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
     function toggleFilter() {
       const filter = document.getElementById('filter-section');
@@ -33,22 +34,10 @@
             <label>일자:</label>
             <input type="date" name="start_date" value="{{ request.query_params.get('start_date', '') }}">
           </div>
-          <div>
-            <label style="visibility:hidden;">~</label>
-            <input type="date" name="end_date" value="{{ request.query_params.get('end_date', '') }}">
-          </div>
         </div>
 
         <div class="form-row">
-          <div>
-            <label>상태:</label>
-            <select name="status">
-              <option value="">전체</option>
-              <option value="대기" {% if request.query_params.get('status') == '대기' %}selected{% endif %}>대기</option>
-              <option value="진행 중" {% if request.query_params.get('status') == '진행 중' %}selected{% endif %}>진행 중</option>
-              <option value="완료" {% if request.query_params.get('status') == '완료' %}selected{% endif %}>완료</option>
-            </select>
-          </div>
+          
           <div>
             <label>담당자:</label>
             <input type="text" name="manager" value="{{ request.query_params.get('manager', '') }}">
@@ -61,28 +50,19 @@
             <input type="text" name="client_name" value="{{ request.query_params.get('client_name', '') }}">
           </div>
           <div>
-            <label>시스템명:</label>
+            <label>프로젝트명:</label>
             <input type="text" name="system_name" value="{{ request.query_params.get('system_name', '') }}">
           </div>
         </div>
 
-        <div class="form-row">
-          <div>
-            <label>대상환경:</label>
-            <input type="text" name="target_env" value="{{ request.query_params.get('target_env', '') }}">
-          </div>
-          <div>
-            <label>유형:</label>
-            <input type="text" name="log_type" value="{{ request.query_params.get('log_type', '') }}">
-          </div>
-        </div>
+        
 
         <div class="button-group">
           <button type="submit">검색</button>
           <a href="/log_reports"><button type="button">초기화</button></a>
         </div>
       </form>
-
+      <div class="table-scroll-x">
       <table>
         <thead>
           <tr>
@@ -98,11 +78,8 @@
             {% endmacro %}
 
             {{ sort_link('log_date', '일자') }}
-            <th>시간</th>
             {{ sort_link('client_name', '고객사') }}
-            {{ sort_link('system_name', '시스템명') }}
-            {{ sort_link('log_type', '유형') }}
-            {{ sort_link('status', '상태') }}
+            {{ sort_link('system_name', '프로젝트명') }}
             {{ sort_link('manager', '담당자') }}
             <th>내용</th>
           </tr>
@@ -115,17 +92,15 @@
                 {{ report.log_date.strftime('%Y-%m-%d') }}
               </a>
             </td>
-            <td>{{ report.log_date.strftime('%H:%M') }}</td>
             <td>{{ report.client_name }}</td>
             <td>{{ report.system_name }}</td>
-            <td>{{ report.log_type }}</td>
-            <td>{{ report.status }}</td>
             <td>{{ report.manager }}</td>
             <td>{{ report.content }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
+      </div>
 
       <div class="pagination">
         {% if page > 1 %}

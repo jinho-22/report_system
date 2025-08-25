@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>리포트 수정</title>
   <link rel="stylesheet" href="/static/style.css">
+  
 </head>
 <body>
   {% include 'layout/header.html' %}
@@ -124,22 +126,9 @@
         <h2>기본 정보</h2>
         <div class="form-row">
           <label>담당자</label><input type="text" name="manager" value="{{ report.manager }}">
-          <label>상태</label>
-          <select name="status">
-            <option value="대기" {% if report.status == '대기' %}selected{% endif %}>대기</option>
-            <option value="진행 중" {% if report.status == '진행 중' %}selected{% endif %}>진행 중</option>
-            <option value="완료" {% if report.status == '완료' %}selected{% endif %}>완료</option>
-          </select>
-        </div>
         <div class="form-row">
           <label>일자</label>
           <input type="date" id="log_date" name="log_date" value="{{ report.log_date.strftime('%Y-%m-%d') if report.log_date }}">
-          <input type="time" id="log_time" name="log_time" value="{{ report.log_date.strftime('%H:%M') if report.log_date }}">
-        </div>
-        <div class="form-row">
-          <label>완료일시</label>
-          <input type="date" id="completed_date" name="completed_date" value="{{ report.completed_date.strftime('%Y-%m-%d') if report.completed_date }}">
-          <input type="time" id="completed_time" name="completed_time" value="{{ report.completed_date.strftime('%H:%M') if report.completed_date }}">
         </div>
       </div>
 
@@ -150,20 +139,10 @@
           <label>시스템명</label><input type="text" name="system_name" value="{{ report.system_name }}">
         </div>
         <div class="form-row">
-          <label>대상 환경</label><input type="text" name="target_env" value="{{ report.target_env }}">
-          <label>유형</label><input type="text" name="log_type" value="{{ report.log_type }}">
-        </div>
-        <div class="form-row">
           <label>내용</label><textarea name="content">{{ report.content }}</textarea>
         </div>
         <div class="form-row">
-          <label>조치</label><textarea name="action">{{ report.action }}</textarea>
-        </div>
-        <div class="form-row">
-          <label>요약</label><textarea name="summary">{{ report.summary }}</textarea>
-        </div>
-        <div class="form-row">
-          <label>비고</label><textarea name="etc">{{ report.etc }}</textarea>
+          <label>특이사항</label><textarea name="etc">{{ report.etc }}</textarea>
         </div>
       </div>
       {% endif %}

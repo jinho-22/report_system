@@ -5,13 +5,13 @@
   <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- ⭐ -->
   <title>일지 등록</title>
-  <link rel="stylesheet" href="/static/style.css?v=20250814-2"> <!-- 캐시무력화 -->
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
   {% include 'layout/header.html' %}
   <div class="container">
-    <h1>솔리데오 일간 보고</h1>
+    <h1>일간 보고</h1>
     <form method="post" action="/log/submit" onsubmit="return validateForm()">
       <div class="section">
         <h2>기본 정보</h2>
@@ -50,7 +50,7 @@
             {% endfor %}
           </select>
 
-          <label>시스템명</label>
+          <label>프로젝트명</label>
           <select name="system_name" id="system_name">
             <option value="">--선택--</option>
           </select>
@@ -173,6 +173,12 @@
       }
     }
   </script>
+  <script>
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();  // 일부 브라우저에서는 필요
+    e.returnValue = "";  // 크롬/엣지/사파리: 빈 문자열 지정해야 확인창 뜸
+  });
+</script>
 
 </body>
 

@@ -557,6 +557,8 @@ body>div>div>div.download-link>a {
     width: 100%; font-size: 15px; padding: 12px 14px;
   }
 
+
+
   .button-group { flex-direction: column; gap: 8px; }
   .button-group button, .filter-bar button, .csv-download-btn { width: 100%; }
 
@@ -572,6 +574,17 @@ body>div>div>div.download-link>a {
   }
 
   .pagination a, .pagination .current { padding: 10px 12px; font-size: 14px; }
+
+    .form-row input[name="log_date"],
+.form-row input[name="log_time"],
+.form-row input[name="completed_date"],
+.form-row input[name="completed_time"] {
+  width: 92%
+}
+
+.form-row input[readonly][disabled] {
+ width: 92%   /* 자동 늘어남 방지 */
+}
 }
 
 /* =========================
@@ -640,7 +653,7 @@ body>div>div>div.download-link>a {
   .button-group button, .filter-bar button, .csv-download-btn { width: auto; }
 
   .filter-bar { flex-direction: row; align-items: center; justify-content: space-between; }
-  .filter-bar input[type="text"] { width: 220px; }
+  .filter-bar input[type="text"] { width: 200px; }
 
   table { display: table; white-space: normal; }
 }
@@ -675,3 +688,7 @@ body>div>div>div.download-link>a {
     background: #f0f8ff;
   }
 }
+
+
+
+.table-scroll-x thead th { min-width: 90px; }

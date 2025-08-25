@@ -248,13 +248,14 @@ def login(
 ):
     user = db.query(User).filter(User.username == username).first()
     if not user or not verify_password(password, user.password):
-        return templates.TemplateResponse("login/login.html", {
-            "request": request,
-            "error": "아이디 또는 비밀번호가 일치하지 않습니다."
-        })
+        return templates.TemplateResponse(
+            "login/login.html",
+            {"request": request, "error": "아이디 또는 비밀번호가 일치하지 않습니다."}
+        )
 
     access_token = create_access_token(data={"sub": user.username})
-    response = RedirectResponse(url="/", status_code=303)
+
+    response = RedirectResponse(url="/log", status_code=303)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
 
     request.session["username"] = user.username
@@ -274,7 +275,11 @@ def logout(request: Request):
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
+    
+    
     return templates.TemplateResponse("login/register.html", {"request": request})
+
+
 
 @app.post("/register")
 async def register(
