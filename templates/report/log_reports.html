@@ -31,8 +31,13 @@
       <form id="filter-section" method="get" style="display: none;">
         <div class="form-row">
           <div>
-            <label>일자:</label>
+            <label>일자 범위:</label>
             <input type="date" name="start_date" value="{{ request.query_params.get('start_date', '') }}">
+          </div>
+          
+          <div>
+            <label style="visibility:hidden;">~</label>
+            <input type="date" name="end_date" value="{{ request.query_params.get('end_date', '') }}">
           </div>
         </div>
 
