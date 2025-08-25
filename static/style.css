@@ -578,6 +578,8 @@ body>div>div>div.download-link>a {
     .form-row input[name="log_date"],
 .form-row input[name="log_time"],
 .form-row input[name="completed_date"],
+.form-row input[name="username"],
+.form-row input[name="password"],
 .form-row input[name="completed_time"] {
   width: 92%
 }
