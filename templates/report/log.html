@@ -173,12 +173,6 @@
       }
     }
   </script>
-  <script>
-  window.addEventListener("beforeunload", function (e) {
-    e.preventDefault();  // 일부 브라우저에서는 필요
-    e.returnValue = "";  // 크롬/엣지/사파리: 빈 문자열 지정해야 확인창 뜸
-  });
-</script>
 
 </body>
 
