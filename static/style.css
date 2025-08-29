@@ -706,3 +706,37 @@ body>div>div>div.download-link>a {
   opacity: 0.8;
 }
 
+
+.table-scroll-x table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* '내용' 열 너비 (원하는 비율로 조정 가능) */
+.col-content { width: 40%; }
+
+/* 기본은 한 줄 말줄임 (필요시 th/td 전역 적용 아님) */
+.col-content { 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 여러 줄 말줄임: 2줄(데스크탑), 모바일에선 3줄 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;   /* 데스크탑: 2줄 */
+  line-clamp: 2;           /* 표준 속성 추가 */
+  overflow: hidden;
+  white-space: normal;      /* 줄바꿈 허용 */
+  word-break: break-word;   /* 단어 길 때 적절히 개행 */
+}
+
+/* 모바일에서 ‘내용’ 더 보여주고 싶으면 3줄로 */
+@media (max-width: 768px) {
+  .col-content { width: 50%; }
+  .line-clamp-2 { 
+    -webkit-line-clamp: 3; 
+    line-clamp: 3; /* Standard property for compatibility */
+  }
+}

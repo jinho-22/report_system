@@ -781,32 +781,25 @@ async def download_log_csv(
             LogReport.manager.contains(search)
         )
 
-    # ✅ 최신 일자 기준 정렬 추가
+    # ✅ 최신 일자 기준 정렬 유지
     query = query.order_by(LogReport.log_date.desc())
 
     reports = query.all()
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "일자", "고객사", "시스템명", "대상 환경", "유형",
-        "내용", "조치", "담당자", "상태", "완료일자", "요약", "비고"
-    ])
+
+    # ✅ 헤더: 프로젝트는 system_name 값을 CSV 상에서 "프로젝트"로 표기
+    writer.writerow(["담당자", "일자", "고객사", "프로젝트", "작업내용", "특이사항"])
 
     for r in reports:
         writer.writerow([
-            r.log_date.strftime("%Y-%m-%d %H:%M") if r.log_date else '',
-            r.client_name or '',
-            r.system_name or '',
-            r.target_env or '',
-            r.log_type or '',
-            r.content or '',
-            r.action or '',
             r.manager or '',
-            r.status or '',
-            r.completed_date.strftime("%Y-%m-%d %H:%M") if r.completed_date else '',
-            r.summary or '',
-            r.etc or ''
+            r.log_date.strftime("%Y-%m-%d") if r.log_date else '',
+            r.client_name or '',
+            r.system_name or '',   # ← CSV에서는 "프로젝트"로 표기
+            r.content or '',       # ← 작업내용
+            r.etc or ''            # ← 특이사항
         ])
 
     output.seek(0)

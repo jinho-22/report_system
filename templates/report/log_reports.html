@@ -100,7 +100,7 @@
             <td>{{ report.client_name }}</td>
             <td>{{ report.system_name }}</td>
             <td>{{ report.manager }}</td>
-            <td>{{ report.content }}</td>
+            <td><span class="line-clamp-2" title="{{ report.content }}">{{ report.content }}</span></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -139,5 +139,6 @@
 
     </div>
   </div>
+  
 </body>
 </html>
