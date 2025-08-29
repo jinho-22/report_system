@@ -1895,3 +1895,5 @@ def leave_comp_submit(
     db.add(item)
     db.commit()
     return RedirectResponse(url="/", status_code=303)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")

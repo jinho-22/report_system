@@ -524,9 +524,9 @@ body>div>div>div.download-link>a {
   /* --- 헤더 겹침 방지 --- */
   .top-bar { position: relative; height: 56px; }
   .top-bar h1 {
-    margin: 0; line-height: 56px; font-size: 18px; text-align: center;
-    padding-left: 48px;   /* 좌측 햄버거 공간 예약 */
-    padding-right: 120px; /* 우측 .header 버튼 공간 예약 (필요시 조정) */
+    margin: 0; line-height: 20px; font-size: 18px; text-align: center;
+    /* padding-left: 48px;   좌측 햄버거 공간 예약 */
+    /* padding-right: 120px; 우측 .header 버튼 공간 예약 (필요시 조정) */
   }
   .hamburger {
     position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
@@ -689,3 +689,20 @@ body>div>div>div.download-link>a {
 
 
 .table-scroll-x thead th { min-width: 90px; }
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  border-top: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.footer-logo img {
+  max-height: 40px;
+  opacity: 0.8;
+}
+
