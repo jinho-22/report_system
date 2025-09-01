@@ -1194,6 +1194,38 @@ def log_report_list(
     db: Session = Depends(get_db)
 ):
     offset = (page - 1) * limit
+
+    # 1) 드롭다운용 고객사 목록 (LogReport 기준, NULL/빈값 제외)
+    client_rows = (
+        db.query(LogReport.client_name)
+          .filter(LogReport.client_name.isnot(None))
+          .filter(LogReport.client_name != "")
+          .distinct()
+          .all()
+    )
+    client_names = sorted([r[0] for r in client_rows], key=natural_keys)
+
+    # 2) 드롭다운용 프로젝트명 목록
+    if client_name:
+        system_rows = (
+            db.query(LogReport.system_name)
+              .filter(LogReport.system_name.isnot(None))
+              .filter(LogReport.system_name != "")
+              .filter(LogReport.client_name == client_name)
+              .distinct()
+              .all()
+        )
+    else:
+        system_rows = (
+            db.query(LogReport.system_name)
+              .filter(LogReport.system_name.isnot(None))
+              .filter(LogReport.system_name != "")
+              .distinct()
+              .all()
+        )
+    system_names = sorted([r[0] for r in system_rows], key=natural_keys)
+
+    # 3) 목록 조회(필터)
     query = db.query(LogReport)
 
     if manager:
@@ -1201,9 +1233,9 @@ def log_report_list(
     if status:
         query = query.filter(LogReport.status == status)
     if client_name:
-        query = query.filter(LogReport.client_name.contains(client_name))
+        query = query.filter(LogReport.client_name == client_name)  # 정확 매칭
     if system_name:
-        query = query.filter(LogReport.system_name.contains(system_name))
+        query = query.filter(LogReport.system_name == system_name)  # 정확 매칭
     if target_env:
         query = query.filter(LogReport.target_env.contains(target_env))
     if log_type:
@@ -1213,7 +1245,7 @@ def log_report_list(
             LogReport.log_date.between(start_date + " 00:00:00", end_date + " 23:59:59")
         )
 
-    # ✅ 통합검색
+    # 통합검색(여러 컬럼 OR)
     from sqlalchemy import or_
     if search:
         keyword = f"%{search}%"
@@ -1232,20 +1264,28 @@ def log_report_list(
             )
         )
 
+    # 일단 모두 가져와서(테이블 크면 ORDER BY 최적화 고려)
     all_reports = query.all()
-    if sort in ["client_name", "system_name", "manager"]:
-        all_reports.sort(key=lambda x: natural_keys(getattr(x, sort) or ""), reverse=(direction == "desc"))
-    elif hasattr(LogReport, sort):
-        all_reports.sort(key=lambda x: getattr(x, sort), reverse=(direction == "desc"))
 
+    # 4) 정렬 (자연정렬 포함)
+    reverse = (direction == "desc")
+    if sort in ["client_name", "system_name", "manager"]:
+        all_reports.sort(key=lambda x: natural_keys(getattr(x, sort) or ""), reverse=reverse)
+    elif hasattr(LogReport, sort):
+        all_reports.sort(key=lambda x: getattr(x, sort), reverse=reverse)
+    else:
+        # 기본: 날짜 내림차순
+        all_reports.sort(key=lambda x: x.log_date, reverse=True)
+
+    # 5) 페이징
     total = len(all_reports)
-    total_pages = ceil(total / limit)
+    total_pages = ceil(total / limit) if limit > 0 else 1
     start_page = max(1, page - 2)
     end_page = min(start_page + 4, total_pages)
     start_page = max(1, end_page - 4)
-
     reports = all_reports[offset:offset + limit]
 
+    # 6) 쿼리스트링(정렬/페이지 제외 → 링크 중복 방지)
     query_dict = {
         "manager": manager,
         "status": status,
@@ -1256,8 +1296,9 @@ def log_report_list(
         "start_date": start_date,
         "end_date": end_date,
         "search": search,
-        "sort": sort,
-        "direction": direction
+        # "sort": sort,             # 제외
+        # "direction": direction,   # 제외
+        # "page": page,             # 제외
     }
     query_string = urlencode({k: v for k, v in query_dict.items() if v})
 
@@ -1270,7 +1311,10 @@ def log_report_list(
         "end_page": end_page,
         "query_string": query_string,
         "current_sort": sort,
-        "current_direction": direction
+        "current_direction": direction,
+        # ▼ 드롭다운 데이터 전달
+        "client_names": client_names,
+        "system_names": system_names,
     })
 
 
